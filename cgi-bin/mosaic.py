@@ -5,10 +5,10 @@ import numpy as np
 from scipy.spatial import KDTree
 from PIL import Image
 from config import IMGDIR, PROPICDIR, MOSAICDIR
+from likes import likesMain
 from progressbar import ProgressBar
 
-def listFiles():
-    # TODO: use list of imagepaths
+def listAllFiles():
     return [e.replace("\\", "/") for e in glob.glob(os.path.join(IMGDIR, "*.jpg"))]
 
 def createKDTree(imagefiles):
@@ -53,7 +53,7 @@ def getAverageColorOfRegion(img, xbounds, ybounds):
 
 def parseProfilePicture(propic, width=20, height=20):
     if width != height: # ensure square output image
-        raise ValueError("Width and height must be the same")
+        raise ValueError("Width ({0}) and height ({1}) must be the same".format(width, height))
     if width < 20 or height < 20: # ensure enough images
         raise ValueError("Width and height both must be >= 10")
     img = Image.open(propic)
@@ -118,18 +118,21 @@ def debugMosaic(outfile, colors, widthInt=50, heightInt=50):
     pbar.finish()
     output.save(outfile)
 
-def main(propic, width=50, height=50):
-    files = listFiles()
+def mosaicMain(propic, files, width=50, height=50):
+    # files = listAllFiles()
     tree, d = createKDTree(files)
     arr = parseProfilePicture(propic, width, height)
     imgs = getBestImages(arr, tree, d)
-    createMosaic(os.path.join(MOSAICDIR, os.path.basename(propic)), imgs)
+    mosaicimgpath = os.path.join(MOSAICDIR, os.path.basename(propic))
+    createMosaic(mosaicimgpath, imgs)
+    return mosaicimgpath
 
-def debug(propic, width=50, height=50):
-    files = listFiles()
+def debug(propic, files, width=50, height=50):
+    # files = listAllFiles()
     tree, d = createKDTree(files)
     arr = parseProfilePicture(propic, width, height)
     debugMosaic("debug_mosaic.jpg", arr)
 
-if __name__ == "__main__":
-    main(os.path.join(PROPICDIR, "10204229723689826.jpg"))
+def test():
+    imgpaths, propic = likesMain()
+    return mosaicMain(propic, imgpaths)

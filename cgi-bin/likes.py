@@ -35,25 +35,29 @@ def downloadPictures(graph, arr):
     else:
         with open(IMGCACHE, "r") as f:
             imgcache = json.load(f)
-    # TODO: make list of imagepaths
+    
+    imgpaths = []
     progress = ProgressBar()
     for like in progress(arr):
         pageid = like["id"]
         pageinfo = graph.get_connections(pageid, "photos", fields="created_time")
-        # omit blank/default profile pictures
+        # omit blank/default pictures
         if len(pageinfo["data"]) > 0:
             imgtime = datetime.datetime.strptime(pageinfo["data"][0]["created_time"], "%Y-%m-%dT%H:%M:%S+0000")
+            imgpath = os.path.join(IMGDIR, pageid + ".jpg")
             # execute if image hasn't been downloaded before OR if image has been updated on Facebook
             if pageid not in imgcache or imgtime > datetime.datetime.strptime(imgcache[pageid]["created_time"], "%Y-%m-%dT%H:%M:%S+0000"):
                 pic = graph.get_connections(pageid, "picture")
                 picurl = pic["url"]
                 img = requests.get(picurl)
-                with open(os.path.join(IMGDIR, pageid + ".jpg"), "wb") as imgfile:
+                with open(imgpath, "wb") as imgfile:
                     imgfile.write(img.content)
                 imgcache[pageid] = imgtime
+            imgpaths.append(imgpath)
     
     with open(IMGCACHE, "w+") as f:
         json.dump(imgcache, f)
+    return imgpaths
 
 def downloadProfilePicture(graph):
     print "Downloading your profile picture"
@@ -66,14 +70,17 @@ def downloadProfilePicture(graph):
     propic = graph.get_connections("me", "picture", width=9999, height=9999)
     propicurl = propic["url"]
     img = requests.get(propicurl)
-    with open(os.path.join(PROPICDIR, myid + ".jpg"), "wb") as f:
+    propicimgpath = os.path.join(PROPICDIR, myid + ".jpg")
+    with open(propicimgpath, "wb") as f:
         f.write(img.content)
+    return propicimgpath
 
-def main(token=token):
+def likesMain(token=token):
     graph = facebook.GraphAPI(token)
     likes = getLikes(graph)
-    downloadPictures(graph, likes)
-    downloadProfilePicture(graph)
+    imgpaths = downloadPictures(graph, likes)
+    propicpath = downloadProfilePicture(graph)
+    return (imgpaths, propicpath)
 
 if __name__ == "__main__":
-    main()
+    imgpaths, propicpath = likesMain()

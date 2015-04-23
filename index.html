@@ -50,7 +50,7 @@
 			cookie     : true,  // enable cookies to allow the server to access 
 	                    		// the session
 			xfbml      : true,  // parse social plugins on this page
-			version    : 'v2.2' // use version 2.2
+			version    : 'v2.3' // use version 2.2
 		});
 
 		// Now that we've initialized the JavaScript SDK, we call 
@@ -85,14 +85,16 @@
 	function testAPI() {
 		console.log('Welcome!  Fetching your information.... ');
 		FB.api('/me', function (response) {
+			// console.log(response);
 			console.log('Successful login for: ' + response.name);
 			document.getElementById('status').innerHTML =
 				'Thanks for logging in, ' + response.name + '!';
+			document.getElementById("mosaic").innerHTML =
+				'<img alt="Mosaic" class="picture" src=mosaics/' + response.id + '.jpg>';
 		});
 		FB.api('/me/picture?width=9999&height=9999', function (response) {
-			console.log(response["data"]["url"]);
 			document.getElementById('profile-picture').innerHTML =
-				'<img alt="Profile Picture" class="picture" src=' + response["data"]["url"] + '>';
+				'<img alt="Profile Picture" class="picture" src=' + response.data.url + '>';
 		});
 	}
 </script>
@@ -110,6 +112,8 @@
 <div id="status"></div>
 
 <div id="profile-picture"></div>
+
+<div id="mosaic"></div>
 
 </body>
 </html>
