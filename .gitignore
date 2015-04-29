@@ -59,6 +59,6 @@ target/
 images/
 propics/
 mosaics/
-log.json
 config.py
 Thumbs.db
+bower_components/
