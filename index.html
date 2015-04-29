@@ -13,31 +13,8 @@
 	<script src="/static/javascripts/templates.js"></script>
 </head>
 <body>
-	<script>
-		window.fbAsyncInit = function() {
-			FB.init({
-				appId      : '1580113125600195',
-				cookie     : true,  // enable cookies to allow the server to access 
-		                    		// the session
-				xfbml      : true,  // parse social plugins on this page
-				version    : 'v2.3' // use version 2.2
-			});
-
-			FB.getLoginStatus(function (response) {
-				statusChangeCallback(response);
-			});
-
-		};
-
-		// Load the SDK asynchronously
-		(function (d, s, id) {
-			var js, fjs = d.getElementsByTagName(s)[0];
-			if (d.getElementById(id)) return;
-			js = d.createElement(s); js.id = id;
-			js.src = "http://connect.facebook.net/en_US/sdk.js";
-			fjs.parentNode.insertBefore(js, fjs);
-		} (document, 'script', 'facebook-jssdk'));
-	</script>
+	<!-- Login partial goes here -->
+	<div id="login"></div>
 
 	<!-- Header partial goes here -->
 	<div id="header"></div>
@@ -49,8 +26,7 @@
 		</div>
 	</div>
 	
-	<script src="http://connect.facebook.net/en_US/all.js"></script>
-	<script src="/bower_components/jquery-ui/jquery-ui.min.js"></script>
-	<script src="/static/javascripts/login.js"></script>
+	<!-- Javascripts partial goes here -->
+	<div id="javascripts"></div>
 </body>
 </html>
