@@ -3,7 +3,7 @@ import os
 import json
 import datetime
 import requests
-from config import token, IMGDIR, IMGCACHE, PROPICDIR, ref
+from config import token, IMGDIR, PROPICDIR, ref
 
 def getProfile(graph):
     return graph.get_object("me")
@@ -42,15 +42,18 @@ def downloadPictures(graph, arr, _id):
             imgpath = os.path.join(IMGDIR, pageid + ".jpg")
             # execute if image hasn't been downloaded before OR if image has been updated on Facebook
             # TODO: check if in firebase
+            # pic = graph.get_connections(pageid, "picture")
+            # picurl = pic["url"]
+            # img = requests.get(picurl)
+            # with open(imgpath, "wb") as imgfile:
+            #   imgfile.write(img.content)
+            # push to imgtime to firebase
         pbarval += 1
         ref.put("/progress", _id, {"message": message, "max": pbarmax, "val": pbarval})
     
-    with open(IMGCACHE, "w+") as f:
-        json.dump(imgcache, f)
     return imgpaths
 
 def downloadProfilePicture(graph, _id):
-    # print "Downloading your profile picture"
     # create propic directory if necessary
     if not os.path.exists(PROPICDIR):
         os.makedirs(PROPICDIR)
